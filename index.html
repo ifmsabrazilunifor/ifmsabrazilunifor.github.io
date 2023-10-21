@@ -111,10 +111,21 @@
         <h3>Imagem redimensionada:</h3>
         <img id="outputImage" width="140" height="140">
     </div>
+    <button id="downloadButton">Download Resized Image</button>
+
+    <section style="margin-top: 50px; padding: 20px; border: 1px solid #ccc; border-radius: 5px; background-color: #f7f7f7;">
+        <h1>Passo #2.5: Fazer upload da imagem para provedor externo</h1>
+        <p style="font-size: 16px; line-height: 1.5;">
+            Para a assinatura não ficar muito longa, vá nesse site aqui <a href="https://postimg.cc/">https://postimg.cc/</a>, faça o upload de forma gratuita e cole o link direto resultante abaixo. Favor copiar somente o link direto!
+        </p>
+    </section>
 
     <h1>Passo #2: Inserir informações da assinatura</h1>
     <div class="card">
         <form id="signatureForm">
+            <label>Link direto do postimg.cc:</label>
+            <input type="text" id="sitelink" required>
+
             <label>Digite seu nome completo:</label>
             <input type="text" id="nome" required>
 
@@ -154,45 +165,42 @@
         // ... (same script as before)
     // Image Resizing JavaScript code
     function resizeImage(file, callback) {
-    const reader = new FileReader();
-    reader.onload = function(event) {
-        const img = new Image();
-        img.src = event.target.result;
-        img.onload = function() {
-            const canvas = document.createElement('canvas');
-            const ctx = canvas.getContext('2d');
-            canvas.width = 140;
-            canvas.height = 140;
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            const img = new Image();
+            img.src = event.target.result;
+            img.onload = function() {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                canvas.width = 140;
+                canvas.height = 140;
 
-            let width = img.width;
-            let height = img.height;
+                let width = img.width;
+                let height = img.height;
 
-            const aspectRatio = width / height;
+                // calculate the aspect ratio
+                const aspectRatio = width / height;
 
-            // Adjusting for the 5px padding on top and bottom
-            const maxHeight = 100;  // maximum height after considering padding
-            if (height > width) {
-                height = Math.min(height, maxHeight);
-                width = height * aspectRatio;
-            } else {
-                width = Math.min(width, maxHeight * aspectRatio);
-                height = width / aspectRatio;
-            }
+                if (width > height) {
+                    // width is the larger dimension
+                    width = 140;
+                    height = 140 / aspectRatio;
+                } else {
+                    // height is the larger dimension or they're equal
+                    height = 140;
+                    width = 140 * aspectRatio;
+                }
 
-            // calculate the position to center the image with 5px padding on top and bottom
-            const x = (canvas.width - width) / 2;
-            const y = (canvas.height - height) / 2;
+                // calculate the position to center the image
+                const x = (canvas.width - width) / 2;
+                const y = (canvas.height - height) / 2;
 
-            ctx.fillStyle = 'white';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            ctx.drawImage(img, x, y, width, height);
-            callback(canvas.toDataURL());  // return the DataURL of the canvas
-        };
+                ctx.drawImage(img, x, y, width, height);
+                callback(canvas.toDataURL());  // return the DataURL of the canvas (the resized image)
+            };
+        }
+        reader.readAsDataURL(file);
     }
-    reader.readAsDataURL(file);
-}
-
 
 
     const input = document.querySelector('#inputFile');
@@ -238,6 +246,7 @@
         const tel = document.getElementById('tel').value;
         const telegram = document.getElementById('telegram').value;
         const instagram = document.getElementById('instagram').value;
+        const sitelink = document.getElementById('sitelink').value;
 
         let data = baseHtml;
 
@@ -248,7 +257,7 @@
         data = data.replace('@telegram', telegram);
         data = data.replace('@INSTA', instagram);
         data = data.replace('@UNI', uni);
-        data = data.replace('@IMAGE', resizedImageDataURL);
+        data = data.replace('@IMAGE', sitelink);
 
         // Display the signature in the content display div
         document.getElementById('contentDisplay').innerHTML = data;
@@ -273,6 +282,15 @@
         // Clear the selection after copying
         selection.removeAllRanges();
     });
+
+    document.getElementById('downloadButton').addEventListener('click', function() {
+    const a = document.createElement('a');
+    a.href = resizedImageDataURL;  // Use the resized image DataURL
+    a.download = 'resized_image.png';  // Suggest the name for the downloaded file
+    document.body.appendChild(a);
+    a.click();  // Trigger the download
+    document.body.removeChild(a);
+});
 
 
 </script>
