@@ -96,6 +96,43 @@
         .heart {
             color: red;
         }
+        select {
+        width: 100%;
+        padding: 12px;
+        margin: 8px 0;
+        border: 1px solid #e0e0e0;
+        border-radius: 5px;
+        font-size: 16px;
+        transition: border 0.3s;
+        font-family: 'Poppins', sans-serif;
+        color: #333;
+        background-color: #ffffff;
+        -webkit-appearance: none; /* Removes default style in some browsers */
+        -moz-appearance: none;    /* Removes default style in Firefox */
+        appearance: none;         /* Removes default style */
+        cursor: pointer;
+        background: url('data:image/svg+xml;utf8,<svg fill="#0077B6" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5H7z"/><path d="M0 0h24v24H0z" fill="none"/></svg>') no-repeat;
+        background-position: right 10px top 50%, 0 0; /* Position the icon */
+        background-size: 24px;
+    }
+
+    select:focus {
+        border-color: #0077B6;
+        outline: none;
+    }
+
+    option {
+        padding: 10px;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    /* Style for group labels in dropdown */
+    optgroup {
+        font-family: 'Archivo', sans-serif;
+        color: #0077B6;
+        font-weight: bold;
+        font-size: 16px;
+    }
     </style>
 </head>
 
@@ -129,8 +166,45 @@
             <label>Digite seu nome completo:</label>
             <input type="text" id="nome" required>
 
-            <label>Digite seu cargo; ex: Presidente Local (LP):</label>
-            <input type="text" id="cargo" required>
+            <label>Selecione seu cargo; ex: Presidente Local (LP):</label>
+            <select id="positionDropdown" onchange="checkOtherOption(this)">
+                <!-- Administrativo -->
+                <optgroup label="Administrativo">
+                    <option value="Presidente Local (LP)">Presidente Local (LP)</option>
+                    <option value="Vice Presidente para Assuntos Internos Local (LVPI)">Vice Presidente para Assuntos Internos Local (LVPI)</option>
+                    <option value="Vice Presidente para Assuntos Externos Local (LVPE)">Vice Presidente para Assuntos Externos Local (LVPE)</option>
+                    <option value="Secretário Geral Local (LSG)">Secretário Geral Local (LSG)</option>
+                    <option value="Diretor Financeiro Local (LDF)">Diretor Financeiro Local (LDF)</option>
+                    <option value="LDiretor de Comunicação e Marketing Local (LCM-d)">Diretor de Comunicação e Marketing Local (LCM-d)</option>
+                    <option value="Conselho Supervisor Local (LSupCo)">Conselho Supervisor Local (LSupCo)</option>
+                </optgroup>
+                
+                <!-- Atividades -->
+                <optgroup label="Atividades">
+                    <option value="Diretor de Educação Médica Local (LOME-d)">Diretor de Educação Médica Local (LOME-d)</option>
+                    <option value="Diretor de Direitos Humanos e Paz Local (LORP-d)">Diretor de Direitos Humanos e Paz Local (LORP-d)</option>
+                    <option value="Diretor de Direitos Sexuais e Reprodutivos Incluindo HIV e AIDS Local (LORA-d)">Diretor de Direitos Sexuais e Reprodutivos Incluindo HIV e AIDS Local (LORA-d)</option>
+                    <option value="Diretor de Programas e Atividades Local (LPA-d)">Diretor de Programas e Atividades Local (LPA-d)</option>
+                </optgroup>
+                
+                <!-- Intercâmbios -->
+                <optgroup label="Intercâmbios">
+                    <option value="Diretor de Intercâmbios Internacionais Profissionais Local (LEO-d)">Diretor de Intercâmbios Internacionais Profissionais Local (LEO-d)</option>
+                    <option value="Diretor de Intercâmbios Internacionais de Pesquisa Local (LORE-d)">Diretor de Intercâmbios Internacionais de Pesquisa Local (LORE-d)</option>
+                    <option value="Diretor de Intercâmbios Nacionais Local (LONE-d)">Diretor de Intercâmbios Nacionais Local (LONE-d)</option>
+                </optgroup>
+                
+                <!-- CB e Pesquisa -->
+                <optgroup label="CB e Pesquisa">
+                    <option value="LCB-d">Diretor de Capacity Building Local (LCB-d)</option>
+                    <option value="LPR-d">Diretor de Publicação, Pesquisa e Extensão Local (LPR-d)</option>
+                </optgroup>
+                
+                <option value="others">Outros</option>
+            </select>
+            
+            <input type="text" id="otherInput" style="display:none;">
+            
 
             <label>Digite sua Universidade; ex: Universidade de Fortaleza (UNIFOR):</label>
             <input type="text" id="uni" required>
@@ -235,18 +309,26 @@
     </html>
     `;
 
+
     // Signature Generation JavaScript code
     document.getElementById('signatureForm').addEventListener('submit', function(event) {
         event.preventDefault();
 
         const nome = document.getElementById('nome').value;
-        const cargo = document.getElementById('cargo').value;
         const uni = document.getElementById('uni').value;
         const ano = document.getElementById('ano').value;
         const tel = document.getElementById('tel').value;
         const telegram = document.getElementById('telegram').value;
         const instagram = document.getElementById('instagram').value;
         const sitelink = document.getElementById('sitelink').value;
+
+        const dropdownValue = document.getElementById('positionDropdown').value;
+        let cargo;
+        if (dropdownValue === 'others') {
+            cargo = document.getElementById('otherInput').value;
+        } else {
+            cargo = dropdownValue;
+        }
 
         let data = baseHtml;
 
@@ -291,6 +373,15 @@
     a.click();  // Trigger the download
     document.body.removeChild(a);
 });
+
+function checkOtherOption(selectElement) {
+    var otherInput = document.getElementById('otherInput');
+    if (selectElement.value === 'others') {
+        otherInput.style.display = 'block';
+    } else {
+        otherInput.style.display = 'none';
+    }
+}
 
 
 </script>
