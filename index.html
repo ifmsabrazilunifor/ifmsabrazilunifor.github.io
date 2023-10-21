@@ -164,35 +164,35 @@
             canvas.width = 140;
             canvas.height = 140;
 
-            // Fill the canvas with a white background
-            ctx.fillStyle = 'white';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
             let width = img.width;
             let height = img.height;
 
             const aspectRatio = width / height;
 
-            if (width > height) {
-                width = 140;
-                height = 140 / aspectRatio;
+            // Adjusting for the 5px padding on top and bottom
+            const maxHeight = 100;  // maximum height after considering padding
+            if (height > width) {
+                height = Math.min(height, maxHeight);
+                width = height * aspectRatio;
             } else {
-                height = 140;
-                width = 140 * aspectRatio;
+                width = Math.min(width, maxHeight * aspectRatio);
+                height = width / aspectRatio;
             }
 
+            // calculate the position to center the image with 5px padding on top and bottom
             const x = (canvas.width - width) / 2;
             const y = (canvas.height - height) / 2;
 
-            ctx.drawImage(img, x, y, width, height);
+            ctx.fillStyle = 'white';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // Convert canvas to JPEG format with quality setting of 0.8 (can adjust as needed)
-            const jpegDataURL = canvas.toDataURL('image/jpeg', 0.8);
-            callback(jpegDataURL);  // Return the JPEG DataURL
+            ctx.drawImage(img, x, y, width, height);
+            callback(canvas.toDataURL());  // return the DataURL of the canvas
         };
     }
     reader.readAsDataURL(file);
 }
+
 
 
     const input = document.querySelector('#inputFile');
