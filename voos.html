@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skyscanner URL Generator</title>
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Select2 CSS and JS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+    
+        form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+    
+        label {
+            display: inline-block;
+            width: 30%;
+            margin-right: 10px;
+            vertical-align: middle; /* adjusted for better alignment */
+            margin-top: 8px;
+            font-weight: bold;
+        }
+    
+        select, input[type="date"] {
+            display: inline-block;
+            width: 68%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+            vertical-align: middle;
+        }
+    
+        input[type="submit"] {
+            background-color: #007BFF;
+            color: #ffffff;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+    
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+    
+        /* Adjust the height and line-height of Select2 components */
+        .select2-container .select2-selection--single {
+            height: 38px;
+            line-height: 38px;
+            width: 100%; /* Ensures full width */
+        }
+    
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            line-height: 38px;
+        }
+    
+        #urlList {
+            margin-top: 20px;
+        }
+    
+        #urlList li {
+            list-style-type: none;
+            margin-bottom: 10px;
+        }
+    
+        #openAllUrls {
+            background-color: #28a745;
+            color: #ffffff;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-top: 10px;
+        }
+    
+        #openAllUrls:hover {
+            background-color: #218838;
+        }
+        select#daysBeforeDeparture, select#daysAfterDeparture, select#daysBeforeReturn, select#daysAfterReturn {
+            width: 30%;
+        }
+        .date-adjustment-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .date-adjustment-table td {
+            padding: 8px;
+            vertical-align: middle;
+        }
+
+        .date-adjustment-table label {
+            width: 100%;
+        }
+
+        select#daysBeforeDeparture, select#daysAfterDeparture, select#daysBeforeReturn, select#daysAfterReturn {
+            width: 100%;
+        }
+    </style>
+    
+</head>
+
+<body>
+    <h1>Buscador de Voos para PRTs mais fáceis</h1>
+    <form id="urlForm">
+        <form id="urlForm">
+            <label for="origin">Aeroporto de Origem:</label>
+            <select id="origin" name="origin" required></select>
+            <input type="text" id="originCustom" placeholder="Digite código de aeroporto" style="width: 68%; padding: 10px; margin-bottom: 20px; border: 1px solid #ccc; border-radius: 4px; font-size: 16px; vertical-align: middle;" />
+            <br>
+    
+            <label for="destination">Aeroporto de Destino:</label>
+            <select id="destination" name="destination" required></select>
+            <input type="text" id="destinationCustom" placeholder="Digite código de aeroporto" style="width: 68%; padding: 10px; margin-bottom: 20px; border: 1px solid #ccc; border-radius: 4px; font-size: 16px; vertical-align: middle;" />
+            <br>
+
+
+        <label for="departure">Dia de saída:</label>
+        <input type="date" id="departure" name="departure" required>
+        <br>
+
+        <label for="return">Dia de retorno - deixe vazio para só ida:</label>
+        <input type="date" id="return" name="return">
+        <br>
+
+        <label for="flightProvider">Provedor de voos:</label>
+        <select id="flightProvider" name="flightProvider">
+        <option value="skyscanner" selected>Skyscanner</option>
+        </select>
+        <br>
+        <h3>Selecione quantos dias antes e depois da data escolhida quer adicionar/remover para buscar voos</h3>
+        <table class="date-adjustment-table">
+            <tr>
+                <td>
+                    <label for="daysBeforeDeparture">Dias antes da saída:</label>
+                    <select id="daysBeforeDeparture" name="daysBeforeDeparture">
+                        <option value="0" selected>0</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                    </select>
+                </td>
+                <td>
+                    <label for="daysAfterDeparture">Dias depois da saída:</label>
+                    <select id="daysAfterDeparture" name="daysAfterDeparture">
+                        <option value="0" selected>0</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="daysBeforeReturn">Dias antes do retorno:</label>
+                    <select id="daysBeforeReturn" name="daysBeforeReturn">
+                        <option value="0" selected>0</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                    </select>
+                </td>
+                <td>
+                    <label for="daysAfterReturn">Dias depois do retorno:</label>
+                    <select id="daysAfterReturn" name="daysAfterReturn">
+                        <option value="0" selected>0</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                    </select>
+                </td>
+            </tr>
+        </table>
+
+        <input type="submit" value="Generate URLs">
+    </form>
+
+    <ul id="urlList"></ul>
+
+    <script>
+        fetch("https://raw.githubusercontent.com/ifmsabrazilunifor/ifmsabrazilunifor.github.io/main/flights/data.txt")
+            .then(response => response.text())
+            .then(data => {
+                const airports = data.trim().split('\n').map(line => {
+                    const [code, city, country] = line.split(/\t/);
+                    return {
+                        id: code,
+                        text: `${city} (${code}) - ${country}`
+                    };
+                });
+
+                airports.unshift({
+                    id: 'other',
+                    text: 'Outro aeroporto'
+                });
+
+                // Initialize the Select2 dropdowns
+                $('#origin, #destination').select2({
+                    data: airports,
+                    placeholder: 'Select an airport',
+                    allowClear: true
+                });
+
+                // Default to "Other"
+                $('#origin, #destination').val('other').trigger('change');
+                $('#origin, #destination').on('change', function() {
+                const customInput = this.id + 'Custom';
+                if (this.value === 'other') {
+                    $('#' + customInput).show();
+                } else {
+                    $('#' + customInput).hide().val('');  // hide and clear value
+                }
+            });
+            })
+            .catch(error => {
+                console.error("Error fetching or processing data:", error);
+            });
+
+        document.getElementById('urlForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            let origin = document.getElementById('origin').value;
+            if (origin === 'other') {
+                origin = document.getElementById('originCustom').value;
+            }
+
+            let destination = document.getElementById('destination').value;
+            if (destination === 'other') {
+                destination = document.getElementById('destinationCustom').value;
+            }
+
+            const departure = convertDate(document.getElementById('departure').value);
+            const returnDate = convertDate(document.getElementById('return').value);
+            const daysBeforeDeparture = parseInt(document.getElementById('daysBeforeDeparture').value);
+            const daysAfterDeparture = parseInt(document.getElementById('daysAfterDeparture').value);
+            const daysBeforeReturn = parseInt(document.getElementById('daysBeforeReturn').value);
+            const daysAfterReturn = parseInt(document.getElementById('daysAfterReturn').value);
+            
+            const urls = generateSkyscannerUrls(origin, destination, departure, returnDate, daysBeforeDeparture, daysAfterDeparture, daysBeforeReturn, daysAfterReturn);
+            displayUrls(urls);
+        });
+
+        function convertDate(inputDate) {
+            if (!inputDate) return ''; // if no date is provided
+            const parts = inputDate.split('-');
+            return parts[0].slice(2) + parts[1] + parts[2]; // yy + mm + dd
+        }
+
+        function adjustDate(date, offset) {
+    const year = parseInt(date.slice(0, 2)) + 2000; // Adding 2000 as we are considering 21st century
+    const month = parseInt(date.slice(2, 4)) - 1; // JS months are 0-based
+    const day = parseInt(date.slice(4, 6));
+
+    const resultDate = new Date(year, month, day + offset); // Date object will handle month boundaries
+
+    const adjustedYear = resultDate.getFullYear().toString().slice(2);
+    const adjustedMonth = (resultDate.getMonth() + 1).toString().padStart(2, '0'); // Adding 1 as JS months are 0-based
+    const adjustedDay = resultDate.getDate().toString().padStart(2, '0');
+
+    return `${adjustedYear}${adjustedMonth}${adjustedDay}`;
+}
+
+
+function generateSkyscannerUrls(origin, destination, departure, returnDate, daysBeforeDeparture, daysAfterDeparture, daysBeforeReturn, daysAfterReturn) {
+    const base_url = "https://www.skyscanner.com.br/transport/flights/";
+    const params = "?adultsv2=1&cabinclass=economy&childrenv2=&inboundaltsenabled=false&outboundaltsenabled=false&preferdirects=false";
+    const urlList = [];
+    
+    const departureDates = Array.from({length: daysBeforeDeparture + daysAfterDeparture + 1}, (_, i) => adjustDate(departure, i - daysBeforeDeparture));
+
+    departureDates.forEach(date => {
+        if (returnDate) {
+            const returnDates = Array.from({length: daysBeforeReturn + daysAfterReturn + 1}, (_, i) => adjustDate(returnDate, i - daysBeforeReturn));
+            returnDates.forEach(rDate => {
+                urlList.push(`${base_url}${origin}/${destination}/${date}/${rDate}/${params}`);
+            });
+        } else {
+            urlList.push(`${base_url}${origin}/${destination}/${date}/${params}`);
+        }
+    });
+
+    return urlList;
+}
+
+
+
+        function displayUrls(urls) {
+            const urlList = document.getElementById('urlList');
+            urlList.innerHTML = ''; // Clear previous URLs
+            urls.forEach(url => {
+                const li = document.createElement('li');
+                const a = document.createElement('a');
+                a.href = url;
+                a.target = '_blank';
+                a.textContent = url;
+                li.appendChild(a);
+                urlList.appendChild(li);
+            });
+
+
+        }
+    </script>
+</body>
+
+</html>
