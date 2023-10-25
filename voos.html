@@ -2,9 +2,11 @@
 <html lang="en">
 
 <head>
+    <meta property="og:title" content="Buscador de Voos para PRTs mais fáceis">
+    <meta property="og:description" content="Feita por @alex.bfilho">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Skyscanner URL Generator</title>
+    <title>Buscador de Voos para PRTs mais fáceis</title>
 
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -131,6 +133,19 @@
         .heart {
             color: red;
         }
+        /* Updated CSS for multi-select dropdown */
+        .select2-container .select2-selection--multiple {
+            height: auto;
+            min-height: 38px;
+        }
+        .select2-container--default .select2-selection--multiple .select2-selection__choice {
+            background-color: #007BFF;
+            border: none;
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 4px;
+        }
+
     </style>
     
 </head>
@@ -141,16 +156,15 @@
     </div>
     <h1>Buscador de Voos para PRTs mais fáceis</h1>
     <form id="urlForm">
-        <form id="urlForm">
-            <label for="origin">Aeroporto de Origem:</label>
-            <select id="origin" name="origin" required></select>
-            <input type="text" id="originCustom" placeholder="Digite código de aeroporto" style="width: 68%; padding: 10px; margin-bottom: 20px; border: 1px solid #ccc; border-radius: 4px; font-size: 16px; vertical-align: middle;" />
-            <br>
-    
-            <label for="destination">Aeroporto de Destino:</label>
-            <select id="destination" name="destination" required></select>
-            <input type="text" id="destinationCustom" placeholder="Digite código de aeroporto" style="width: 68%; padding: 10px; margin-bottom: 20px; border: 1px solid #ccc; border-radius: 4px; font-size: 16px; vertical-align: middle;" />
-            <br>
+        <label for="origin">Aeroporto de Origem:</label>
+        <select id="origin" name="origin" required></select>
+        <input type="text" id="originCustom" placeholder="Digite código de aeroporto" style="width: 68%; padding: 10px; margin-bottom: 20px; border: 1px solid #ccc; border-radius: 4px; font-size: 16px; vertical-align: middle;" />
+        <br>
+
+        <label for="destination">Aeroporto de Destino:</label>
+        <select id="destination" name="destination" required></select>
+        <input type="text" id="destinationCustom" placeholder="Digite código de aeroporto" style="width: 68%; padding: 10px; margin-bottom: 20px; border: 1px solid #ccc; border-radius: 4px; font-size: 16px; vertical-align: middle;" />
+        <br>
 
 
         <label for="departure">Dia de saída:</label>
@@ -160,10 +174,11 @@
         <label for="return">Dia de retorno - deixe vazio para só ida:</label>
         <input type="date" id="return" name="return">
         <br>
-
+        
         <label for="flightProvider">Provedor de voos:</label>
-        <select id="flightProvider" name="flightProvider">
-        <option value="skyscanner" selected>Skyscanner</option>
+        <select id="flightProvider" name="flightProvider" multiple>
+            <option value="skyscanner">Skyscanner</option>
+            <option value="gol">Gol</option>
         </select>
         <br>
         <h3>Selecione quantos dias antes e depois da data escolhida quer adicionar/remover para buscar voos</h3>
@@ -231,10 +246,13 @@
                 // Initialize the Select2 dropdowns
                 $('#origin, #destination').select2({
                     data: airports,
-                    placeholder: 'Select an airport',
+                    placeholder: 'Selecione um aerporto',
                     allowClear: true
                 });
-
+                $('#flightProvider').select2({
+                    placeholder: 'Selecione provedor de voos',
+                    allowClear: true
+                });
                 // Default to "Other"
                 $('#origin, #destination').val('other').trigger('change');
                 $('#origin, #destination').on('change', function() {
@@ -250,29 +268,71 @@
                 console.error("Error fetching or processing data:", error);
             });
 
-        document.getElementById('urlForm').addEventListener('submit', function (event) {
-            event.preventDefault();
+            document.getElementById('urlForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+    document.getElementById('urlList').innerHTML = '';  // Clear previous URLs
 
-            let origin = document.getElementById('origin').value;
-            if (origin === 'other') {
-                origin = document.getElementById('originCustom').value;
+    let origin = document.getElementById('origin').value;
+    if (origin === 'other') {
+        origin = document.getElementById('originCustom').value;
+    }
+
+    let destination = document.getElementById('destination').value;
+    if (destination === 'other') {
+        destination = document.getElementById('destinationCustom').value;
+    }
+
+    const departure = convertDate(document.getElementById('departure').value);
+    const returnDate = convertDate(document.getElementById('return').value);
+    const daysBeforeDeparture = parseInt(document.getElementById('daysBeforeDeparture').value);
+    const daysAfterDeparture = parseInt(document.getElementById('daysAfterDeparture').value);
+    const daysBeforeReturn = parseInt(document.getElementById('daysBeforeReturn').value);
+    const daysAfterReturn = parseInt(document.getElementById('daysAfterReturn').value);
+    
+    const selectedProviders = $("#flightProvider").val();
+
+    if (selectedProviders.includes("skyscanner")) {
+        const skyscannerUrls = generateSkyscannerUrls(origin, destination, departure, returnDate, daysBeforeDeparture, daysAfterDeparture, daysBeforeReturn, daysAfterReturn);
+        displayUrls(skyscannerUrls, "Skyscanner");
+    }
+
+    if (selectedProviders.includes("gol")) {
+        const golUrls = generateGolUrls(origin, destination, departure, returnDate, daysBeforeDeparture, daysAfterDeparture, daysBeforeReturn, daysAfterReturn);
+        displayUrls(golUrls, "Gol");
+    }
+});
+
+
+function generateGolUrls(origin, destination, departure, returnDate, daysBeforeDeparture, daysAfterDeparture, daysBeforeReturn, daysAfterReturn) {
+    const base_url = "https://b2c.voegol.com.br/compra/busca-parceiros?pv=br&tipo=DF";
+    const params = "&ADT=1&CHD=0&INF=0";
+    
+    origin = origin.toUpperCase();
+    destination = destination.toUpperCase();
+
+    let urls = [];
+
+    const departureDates = Array.from({ length: daysBeforeDeparture + daysAfterDeparture + 1 }, (_, i) => adjustDate(departure, i - daysBeforeDeparture));
+    const returnDates = returnDate ? Array.from({ length: daysBeforeReturn + daysAfterReturn + 1 }, (_, i) => adjustDate(returnDate, i - daysBeforeReturn)) : [null];
+
+    departureDates.forEach(depDate => {
+        returnDates.forEach(retDate => {
+            const depDateFormatted = depDate.slice(4, 6) + '-' + depDate.slice(2, 4) + '-' + '20' + depDate.slice(0, 2);
+            const retDateFormatted = retDate ? retDate.slice(4, 6) + '-' + retDate.slice(2, 4) + '-' + '20' + retDate.slice(0, 2) : null;
+
+            let url = `${base_url}&de=${origin}&para=${destination}&ida=${depDateFormatted}`;
+            if (retDateFormatted) {
+                url += `&volta=${retDateFormatted}`;
             }
-
-            let destination = document.getElementById('destination').value;
-            if (destination === 'other') {
-                destination = document.getElementById('destinationCustom').value;
-            }
-
-            const departure = convertDate(document.getElementById('departure').value);
-            const returnDate = convertDate(document.getElementById('return').value);
-            const daysBeforeDeparture = parseInt(document.getElementById('daysBeforeDeparture').value);
-            const daysAfterDeparture = parseInt(document.getElementById('daysAfterDeparture').value);
-            const daysBeforeReturn = parseInt(document.getElementById('daysBeforeReturn').value);
-            const daysAfterReturn = parseInt(document.getElementById('daysAfterReturn').value);
-            
-            const urls = generateSkyscannerUrls(origin, destination, departure, returnDate, daysBeforeDeparture, daysAfterDeparture, daysBeforeReturn, daysAfterReturn);
-            displayUrls(urls);
+            url += params;
+            urls.push(url);
         });
+    });
+
+    return urls;
+}
+
+
 
         function convertDate(inputDate) {
             if (!inputDate) return ''; // if no date is provided
@@ -313,26 +373,30 @@ function generateSkyscannerUrls(origin, destination, departure, returnDate, days
         }
     });
 
+    
+
+    //https://b2c.voegol.com.br/compra/busca-parceiros?pv=br&tipo=DF&de=FOR&para=SAO&ida=04-12-2023&volta=19-12-2023&ADT=1&CHD=0&INF=0
+
     return urlList;
 }
 
 
 
-        function displayUrls(urls) {
-            const urlList = document.getElementById('urlList');
-            urlList.innerHTML = ''; // Clear previous URLs
-            urls.forEach(url => {
-                const li = document.createElement('li');
-                const a = document.createElement('a');
-                a.href = url;
-                a.target = '_blank';
-                a.textContent = url;
-                li.appendChild(a);
-                urlList.appendChild(li);
-            });
-
-
-        }
+function displayUrls(urls, provider) {
+    const urlList = document.getElementById('urlList');
+    const header = document.createElement('h3');
+    header.textContent = provider;
+    urlList.appendChild(header);
+    urls.forEach(url => {
+        const li = document.createElement('li');
+        const a = document.createElement('a');
+        a.href = url;
+        a.target = '_blank';
+        a.textContent = url;
+        li.appendChild(a);
+        urlList.appendChild(li);
+    });
+}
     </script>
 </body>
 
