@@ -233,6 +233,8 @@
     <ul id="urlList"></ul>
 
     <script>
+        let validAirportCodes = [];
+
         fetch("https://raw.githubusercontent.com/ifmsabrazilunifor/ifmsabrazilunifor.github.io/main/flights/data.txt")
             .then(response => response.text())
             .then(data => {
@@ -244,7 +246,7 @@
                     };
                 });
 
-                let validAirportCodes = airports.map(airport => airport.id.toUpperCase());
+                validAirportCodes = airports.map(airport => airport.id.toUpperCase());
 
                 airports.unshift({
                     id: 'other',
