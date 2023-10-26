@@ -315,10 +315,8 @@
         const kayakUrls = generateKayakUrls(origin, destination, departure, returnDate, daysBeforeDeparture, daysAfterDeparture, daysBeforeReturn, daysAfterReturn);
         displayUrls(kayakUrls, "Kayak");
 }
-const departure_new = convertDate(document.getElementById('departure').value);
-console.log(departure_new)
-const returnDate_new = convertDate(document.getElementById('return').value);
-console.log(returnDate_new)
+const departure_new = document.getElementById('departure').value;
+const returnDate_new = document.getElementById('return').value;
 const searchData = {
         origin: origin,
         originCustom: document.getElementById('originCustom').value, // Added
@@ -334,20 +332,6 @@ const searchData = {
     };
     setCookie('lastSearch', JSON.stringify(searchData));
 });
-
-function convertDate(yymmdd) {
-    if (!yymmdd || yymmdd.length !== 6) {
-        throw new Error('Invalid date format. Expected format: yymmdd');
-    }
-
-    const yy = yymmdd.substring(0, 2);
-    const mm = yymmdd.substring(2, 4);
-    const dd = yymmdd.substring(4, 6);
-    
-    const yyyy = `20${yy}`;  // assumes all dates are in the 21st century
-    console.log(`${yyyy}-${mm}-${dd}`)
-    return `${yyyy}-${mm}-${dd}`;
-}
 
 
 window.onload = function() { // 5. Check the Cookie on Page Load
