@@ -244,6 +244,8 @@
                     };
                 });
 
+                let validAirportCodes = airports.map(airport => airport.id.toUpperCase());
+
                 airports.unshift({
                     id: 'other',
                     text: 'Outro aeroporto'
@@ -397,7 +399,7 @@ function setCookie(name, value) { // 2. Set the Cookie
         return null;
     }
 
-    let validAirportCodes = airports.map(airport => airport.id.toUpperCase());
+    
 
     document.getElementById('loadLastSearch').addEventListener('click', function() {
     const lastSearch = getCookie('lastSearch');
