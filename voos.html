@@ -397,6 +397,8 @@ function setCookie(name, value) { // 2. Set the Cookie
         return null;
     }
 
+    let validAirportCodes = airports.map(airport => airport.id.toUpperCase());
+
     document.getElementById('loadLastSearch').addEventListener('click', function() {
     const lastSearch = getCookie('lastSearch');
     if (lastSearch) {
@@ -410,7 +412,19 @@ function setCookie(name, value) { // 2. Set the Cookie
         $('#daysAfterDeparture').val(searchData.daysAfterDeparture);
         $('#daysBeforeReturn').val(searchData.daysBeforeReturn);
         $('#daysAfterReturn').val(searchData.daysAfterReturn);
-        
+        if (validAirportCodes.includes(searchData.origin.toUpperCase())) {
+    $('#origin').val(searchData.origin).trigger('change');
+} else {
+    $('#origin').val('other').trigger('change');
+    $('#originCustom').val(searchData.origin).show();
+}
+
+if (validAirportCodes.includes(searchData.destination.toUpperCase())) {
+    $('#destination').val(searchData.destination).trigger('change');
+} else {
+    $('#destination').val('other').trigger('change');
+    $('#destinationCustom').val(searchData.destination).show();
+}
         // Added: Populate custom airport inputs if they exist in the searchData
         if (searchData.origin === 'other' && searchData.originCustom) {
             $('#originCustom').val(searchData.originCustom).show();
