@@ -315,14 +315,15 @@
         const kayakUrls = generateKayakUrls(origin, destination, departure, returnDate, daysBeforeDeparture, daysAfterDeparture, daysBeforeReturn, daysAfterReturn);
         displayUrls(kayakUrls, "Kayak");
 }
-
+const departure_new = convertDate(document.getElementById('departure').value);
+const returnDate_new = convertDate(document.getElementById('return').value);
 const searchData = {
         origin: origin,
         originCustom: document.getElementById('originCustom').value, // Added
         destination: destination,
         destinationCustom: document.getElementById('destinationCustom').value, // Added
-        departure: convertDate(departure),
-        returnDate: convertDate(returnDate),
+        departure: departure_new,
+        returnDate: returnDate_new,
         flightProvider: $("#flightProvider").val(),
         daysBeforeDeparture: daysBeforeDeparture,
         daysAfterDeparture: daysAfterDeparture,
