@@ -182,6 +182,9 @@
             <option value="gol">Gol</option>
             <option value="zupper">Zupper</option>
             <option value="kayak">Kayak</option>
+            <option value="maxmilhas">MaxMilhas (implementando)</option>
+            <option value="latam">LATAM (implementando)</option>
+            <option value="azul">AZUL (implementando)</option>
         </select>
         <br>
         <h3>Selecione quantos dias antes e depois da data escolhida quer adicionar/remover para buscar voos</h3>
@@ -314,18 +317,19 @@
 }
 
 const searchData = {
-            origin: origin,
-            destination: destination,
-            departure: departure,
-            returnDate: returnDate,
-            flightProvider: $("#flightProvider").val(),
-            daysBeforeDeparture: daysBeforeDeparture,
-            daysAfterDeparture: daysAfterDeparture,
-            daysBeforeReturn: daysBeforeReturn,
-            daysAfterReturn: daysAfterReturn
-        };
-        setCookie('lastSearch', JSON.stringify(searchData));
-
+        origin: origin,
+        originCustom: document.getElementById('originCustom').value, // Added
+        destination: destination,
+        destinationCustom: document.getElementById('destinationCustom').value, // Added
+        departure: departure,
+        returnDate: returnDate,
+        flightProvider: $("#flightProvider").val(),
+        daysBeforeDeparture: daysBeforeDeparture,
+        daysAfterDeparture: daysAfterDeparture,
+        daysBeforeReturn: daysBeforeReturn,
+        daysAfterReturn: daysAfterReturn
+    };
+    setCookie('lastSearch', JSON.stringify(searchData));
 });
 
 window.onload = function() { // 5. Check the Cookie on Page Load
@@ -390,21 +394,29 @@ function setCookie(name, value) { // 2. Set the Cookie
         return null;
     }
 
-    document.getElementById('loadLastSearch').addEventListener('click', function() { // 4. Load the Saved Search Data
-        const lastSearch = getCookie('lastSearch');
-        if (lastSearch) {
-            const searchData = JSON.parse(lastSearch);
-            $('#origin').val(searchData.origin).trigger('change');
-            $('#destination').val(searchData.destination).trigger('change');
-            $('#departure').val(searchData.departure);
-            $('#return').val(searchData.returnDate);
-            $('#flightProvider').val(searchData.flightProvider).trigger('change');
-            $('#daysBeforeDeparture').val(searchData.daysBeforeDeparture);
-            $('#daysAfterDeparture').val(searchData.daysAfterDeparture);
-            $('#daysBeforeReturn').val(searchData.daysBeforeReturn);
-            $('#daysAfterReturn').val(searchData.daysAfterReturn);
+    document.getElementById('loadLastSearch').addEventListener('click', function() {
+    const lastSearch = getCookie('lastSearch');
+    if (lastSearch) {
+        const searchData = JSON.parse(lastSearch);
+        $('#origin').val(searchData.origin).trigger('change');
+        $('#destination').val(searchData.destination).trigger('change');
+        $('#departure').val(searchData.departure);
+        $('#return').val(searchData.returnDate);
+        $('#flightProvider').val(searchData.flightProvider).trigger('change');
+        $('#daysBeforeDeparture').val(searchData.daysBeforeDeparture);
+        $('#daysAfterDeparture').val(searchData.daysAfterDeparture);
+        $('#daysBeforeReturn').val(searchData.daysBeforeReturn);
+        $('#daysAfterReturn').val(searchData.daysAfterReturn);
+        
+        // Added: Populate custom airport inputs if they exist in the searchData
+        if (searchData.origin === 'other' && searchData.originCustom) {
+            $('#originCustom').val(searchData.originCustom).show();
         }
-    });
+        if (searchData.destination === 'other' && searchData.destinationCustom) {
+            $('#destinationCustom').val(searchData.destinationCustom).show();
+        }
+    }
+});
 
         function convertDate(inputDate) {
             if (!inputDate) return ''; // if no date is provided
