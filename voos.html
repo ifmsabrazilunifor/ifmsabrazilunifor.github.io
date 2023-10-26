@@ -146,6 +146,21 @@
             border-radius: 4px;
         }
 
+        .btn-style {
+    background-color: #007BFF;
+    color: #ffffff;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn-style:hover {
+    background-color: #0056b3;
+}
+
     </style>
     
 </head>
@@ -155,7 +170,7 @@
         Feito com <span class="heart">❤️</span> por <a href="https://www.instagram.com/alex.bfilho" target="_blank" rel="noopener noreferrer">@alex.bfilho</a>
     </div>
     <h1>Buscador de Voos para PRTs mais fáceis</h1>
-    <button id="loadLastSearch" style="display: none;">Load Last Search</button> <!-- 1. Added Button -->
+    <button id="loadLastSearch" class="btn-style" style="display: none;">Load Last Search</button>
     <form id="urlForm">
         <label for="origin">Aeroporto de Origem:</label>
         <select id="origin" name="origin" required></select>
