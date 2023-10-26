@@ -155,6 +155,7 @@
         Feito com <span class="heart">❤️</span> por <a href="https://www.instagram.com/alex.bfilho" target="_blank" rel="noopener noreferrer">@alex.bfilho</a>
     </div>
     <h1>Buscador de Voos para PRTs mais fáceis</h1>
+    <button id="loadLastSearch" style="display: none;">Load Last Search</button> <!-- 1. Added Button -->
     <form id="urlForm">
         <label for="origin">Aeroporto de Origem:</label>
         <select id="origin" name="origin" required></select>
@@ -179,6 +180,8 @@
         <select id="flightProvider" name="flightProvider" multiple>
             <option value="skyscanner">Skyscanner</option>
             <option value="gol">Gol</option>
+            <option value="zupper">Zupper</option>
+            <option value="kayak">Kayak</option>
         </select>
         <br>
         <h3>Selecione quantos dias antes e depois da data escolhida quer adicionar/remover para buscar voos</h3>
@@ -300,7 +303,47 @@
         const golUrls = generateGolUrls(origin, destination, departure, returnDate, daysBeforeDeparture, daysAfterDeparture, daysBeforeReturn, daysAfterReturn);
         displayUrls(golUrls, "Gol");
     }
+
+    if (selectedProviders.includes("zupper")) {
+    const zupperUrls = generateZupperUrls(origin, destination, departure, returnDate, daysBeforeDeparture, daysAfterDeparture, daysBeforeReturn, daysAfterReturn);
+    displayUrls(zupperUrls, "Zupper");
+}
+    if (selectedProviders.includes("kayak")) {
+        const kayakUrls = generateKayakUrls(origin, destination, departure, returnDate, daysBeforeDeparture, daysAfterDeparture, daysBeforeReturn, daysAfterReturn);
+        displayUrls(kayakUrls, "Kayak");
+}
+
+const searchData = {
+            origin: origin,
+            destination: destination,
+            departure: departure,
+            returnDate: returnDate,
+            flightProvider: $("#flightProvider").val(),
+            daysBeforeDeparture: daysBeforeDeparture,
+            daysAfterDeparture: daysAfterDeparture,
+            daysBeforeReturn: daysBeforeReturn,
+            daysAfterReturn: daysAfterReturn
+        };
+        setCookie('lastSearch', JSON.stringify(searchData));
+
 });
+
+window.onload = function() { // 5. Check the Cookie on Page Load
+        const lastSearch = getCookie('lastSearch');
+        if (lastSearch) {
+            try {
+                const searchData = JSON.parse(lastSearch);
+                if (searchData.origin && searchData.destination && searchData.departure && searchData.flightProvider) {
+                    document.getElementById('loadLastSearch').style.display = 'block';
+                }
+            } catch (e) {
+                console.error("Error parsing last search data:", e);
+            }
+        }
+        else{
+                console.log("No last search data found");
+            }
+    };
 
 
 function generateGolUrls(origin, destination, departure, returnDate, daysBeforeDeparture, daysAfterDeparture, daysBeforeReturn, daysAfterReturn) {
@@ -332,7 +375,36 @@ function generateGolUrls(origin, destination, departure, returnDate, daysBeforeD
     return urls;
 }
 
+function setCookie(name, value) { // 2. Set the Cookie
+        document.cookie = name + "=" + (value || "") + "; path=/";
+    }
 
+    function getCookie(name) { // 3. Get the Cookie
+        const nameEQ = name + "=";
+        const ca = document.cookie.split(';');
+        for (let i = 0; i < ca.length; i++) {
+            let c = ca[i];
+            while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+            if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+        }
+        return null;
+    }
+
+    document.getElementById('loadLastSearch').addEventListener('click', function() { // 4. Load the Saved Search Data
+        const lastSearch = getCookie('lastSearch');
+        if (lastSearch) {
+            const searchData = JSON.parse(lastSearch);
+            $('#origin').val(searchData.origin).trigger('change');
+            $('#destination').val(searchData.destination).trigger('change');
+            $('#departure').val(searchData.departure);
+            $('#return').val(searchData.returnDate);
+            $('#flightProvider').val(searchData.flightProvider).trigger('change');
+            $('#daysBeforeDeparture').val(searchData.daysBeforeDeparture);
+            $('#daysAfterDeparture').val(searchData.daysAfterDeparture);
+            $('#daysBeforeReturn').val(searchData.daysBeforeReturn);
+            $('#daysAfterReturn').val(searchData.daysAfterReturn);
+        }
+    });
 
         function convertDate(inputDate) {
             if (!inputDate) return ''; // if no date is provided
@@ -379,6 +451,79 @@ function generateSkyscannerUrls(origin, destination, departure, returnDate, days
 
     return urlList;
 }
+
+function generateZupperUrls(origin, destination, departure, returnDate, daysBeforeDeparture, daysAfterDeparture, daysBeforeReturn, daysAfterReturn) {
+    let urls = [];
+
+    origin = origin.toUpperCase();       // Convert origin to uppercase
+    destination = destination.toUpperCase(); // Convert destination to uppercase
+
+    const departureDates = Array.from({ length: daysBeforeDeparture + daysAfterDeparture + 1 }, (_, i) => adjustDate(departure, i - daysBeforeDeparture));
+
+    if (returnDate) {
+        const returnDates = Array.from({ length: daysBeforeReturn + daysAfterReturn + 1 }, (_, i) => adjustDate(returnDate, i - daysBeforeReturn));
+
+        departureDates.forEach(depDate => {
+            returnDates.forEach(retDate => {
+                const slice1 = `{"departureDate":"${convertDateToZupper(depDate)}","destinationAirport":"${destination}","originAirport":"${origin}"}`;
+                const slice2 = `{"departureDate":"${convertDateToZupper(retDate)}","originAirport":"${destination}","destinationAirport":"${origin}"}`;
+                const slices = `[${slice1},${slice2}]`;
+                urls.push(`https://www.zupper.com.br/resultados?type=roundTrip&adultQty=1&childrenQty=0&infantQty=0&onlyBusinessClass=false&slices=${encodeURIComponent(slices)}`);
+            });
+        });
+    } else {
+        departureDates.forEach(date => {
+            const slice = `{"departureDate":"${convertDateToZupper(date)}","destinationAirport":"${destination}","originAirport":"${origin}"}`;
+            const slices = `[${slice}]`;
+            urls.push(`https://www.zupper.com.br/resultados?type=oneWay&adultQty=1&childrenQty=0&infantQty=0&onlyBusinessClass=false&slices=${encodeURIComponent(slices)}`);
+        });
+    }
+
+    return urls;
+}
+
+
+
+function convertDateToZupper(inputDate) {
+    if (!inputDate) return '';
+    return '20' + inputDate.slice(0, 2) + '-' + inputDate.slice(2, 4) + '-' + inputDate.slice(4, 6); // yyyy-mm-dd
+}
+
+function generateKayakUrls(origin, destination, departure, returnDate, daysBeforeDeparture, daysAfterDeparture, daysBeforeReturn, daysAfterReturn) {
+    const base_url = "https://www.kayak.com.br/flights/";
+    let urls = [];
+    
+    origin = origin.toUpperCase();       // Convert origin to uppercase
+    destination = destination.toUpperCase(); // Convert destination to uppercase
+
+    const departureDates = Array.from({ length: daysBeforeDeparture + daysAfterDeparture + 1 }, (_, i) => adjustDate(departure, i - daysBeforeDeparture));
+
+    if (returnDate) {
+        const returnDates = Array.from({ length: daysBeforeReturn + daysAfterReturn + 1 }, (_, i) => adjustDate(returnDate, i - daysBeforeReturn));
+
+        departureDates.forEach(depDate => {
+            returnDates.forEach(retDate => {
+                const depDateFormatted = convertDateToKayak(depDate);
+                const retDateFormatted = convertDateToKayak(retDate);
+                urls.push(`${base_url}${origin}-${destination}/${depDateFormatted}/${retDateFormatted}?sort=bestflight_a`);
+            });
+        });
+    } else {
+        departureDates.forEach(date => {
+            const dateFormatted = convertDateToKayak(date);
+            urls.push(`${base_url}${origin}-${destination}/${dateFormatted}?sort=bestflight_a`);
+        });
+    }
+
+    return urls;
+}
+
+
+function convertDateToKayak(inputDate) {
+    if (!inputDate) return '';
+    return '20' + inputDate.slice(0, 2) + '-' + inputDate.slice(2, 4) + '-' + inputDate.slice(4, 6); // yyyy-mm-dd
+}
+
 
 
 
