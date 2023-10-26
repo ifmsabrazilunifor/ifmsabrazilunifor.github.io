@@ -345,7 +345,7 @@ function convertDate(yymmdd) {
     const dd = yymmdd.substring(4, 6);
     
     const yyyy = `20${yy}`;  // assumes all dates are in the 21st century
-
+    console.log(`${yyyy}-${mm}-${dd}`)
     return `${yyyy}-${mm}-${dd}`;
 }
 
