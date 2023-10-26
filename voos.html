@@ -321,8 +321,8 @@ const searchData = {
         originCustom: document.getElementById('originCustom').value, // Added
         destination: destination,
         destinationCustom: document.getElementById('destinationCustom').value, // Added
-        departure: departure,
-        returnDate: returnDate,
+        departure: convertDate(departure),
+        returnDate: convertDate(returnDate),
         flightProvider: $("#flightProvider").val(),
         daysBeforeDeparture: daysBeforeDeparture,
         daysAfterDeparture: daysAfterDeparture,
@@ -331,6 +331,21 @@ const searchData = {
     };
     setCookie('lastSearch', JSON.stringify(searchData));
 });
+
+function convertDate(yymmdd) {
+    if (!yymmdd || yymmdd.length !== 6) {
+        throw new Error('Invalid date format. Expected format: yymmdd');
+    }
+
+    const yy = yymmdd.substring(0, 2);
+    const mm = yymmdd.substring(2, 4);
+    const dd = yymmdd.substring(4, 6);
+    
+    const yyyy = `20${yy}`;  // assumes all dates are in the 21st century
+
+    return `${yyyy}-${mm}-${dd}`;
+}
+
 
 window.onload = function() { // 5. Check the Cookie on Page Load
         const lastSearch = getCookie('lastSearch');
