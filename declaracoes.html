@@ -109,7 +109,7 @@ document.getElementById('createFieldsButton').addEventListener('click', function
 
         if (tagNames) {
             tagNames.forEach(tagName => {
-                let fieldName = tagName.replace(/[{}]/g, '') + `_${i}`;
+                let fieldName = tagName.replace(/[{}]/g, '') + `_${i+1}`;
                 personFields.innerHTML += `<label>${fieldName}: </label><input type='text' name='${fieldName}'><br>`;
             });
         }
