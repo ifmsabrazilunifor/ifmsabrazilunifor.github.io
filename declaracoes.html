@@ -63,12 +63,12 @@
     <textarea id="textEditor" rows="10" cols="50"></textarea>
 
     <div id="tagInputArea">
-        <input type="text" id="tagName" placeholder="Tag name">
+        <input type="text" id="tagName" placeholder="Nome da área customizável">
         <button id="addTagButton">Adicione área customizável</button>
     </div>
 
     <div id="peopleCustomizationArea">
-        <input type="number" id="peopleCount" placeholder="Number of people">
+        <input type="number" id="peopleCount" placeholder="Número de Pessoas">
         <button id="createFieldsButton">Criar campos</button>
     </div>
 
@@ -100,7 +100,7 @@ document.getElementById('createFieldsButton').addEventListener('click', function
 
     for (let i = 0; i < peopleCount; i++) {
         let personFields = document.createElement('div');
-        personFields.innerHTML = `<h3>Person ${i + 1}</h3>`;
+        personFields.innerHTML = `<h3>Pessoa ${i + 1}</h3>`;
         let tagNames = document.getElementById('textEditor').value.match(/\{([^}]+)\}/g);
 
         if (tagNames) {
@@ -135,7 +135,7 @@ document.getElementById('generateFinalTextButton').addEventListener('click', fun
 
         finalTexts[i] = finalText;
 
-        finalTextOutput.innerHTML += `<button id='downloadButton${i}' onclick="loadAndModifyDocx(${i})">Download Person ${i + 1} Document</button>`;
+        finalTextOutput.innerHTML += `<button id='downloadButton${i}' onclick="loadAndModifyDocx(${i})">Baixar Declaração da Pessoa ${i + 1} Document</button>`;
     };
 }); 
 
