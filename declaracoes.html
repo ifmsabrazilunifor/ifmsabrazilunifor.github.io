@@ -134,13 +134,8 @@ document.getElementById('generateFinalTextButton').addEventListener('click', fun
         finalTextOutput.innerHTML += `<h3>Person ${i + 1}</h3><p>${finalText}</p>`;
 
         finalTexts[i] = finalText;
-        let downloadLink = document.createElement("button");
-        downloadLink.innerText = "Download Person " + (i + 1) + " Document";
-        (function(index) {
-            downloadLink.onclick = "loadAndModifyDocx(" + index + ")";
-        })(i);
-        finalTextOutput.appendChild(downloadLink);
-    }
+
+        finalTextOutput.innerHTML += `<button id='downloadButton${i}' onclick="loadAndModifyDocx(${i})">Download Person ${i + 1} Document</button>`;
 });
 
 function loadAndModifyDocx(personIndex) {
