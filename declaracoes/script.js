@@ -29,13 +29,20 @@ document.getElementById('createFieldsButton').addEventListener('click', function
 });
 
 document.getElementById('generateFinalTextButton').addEventListener('click', function() {
-    let finalText = document.getElementById('textEditor').value;
-    let fields = document.querySelectorAll('#fieldsContainer input');
-    
-    fields.forEach(field => {
-        let regex = new RegExp(`\\{${field.name.split('_')[0]}\\}`, 'g');
-        finalText = finalText.replace(regex, field.value);
-    });
+    let originalText = document.getElementById('textEditor').value;
+    let peopleCount = document.getElementById('peopleCount').value;
+    let finalTextOutput = document.getElementById('finalTextOutput');
+    finalTextOutput.innerHTML = ''; // Clear existing output
 
-    document.getElementById('finalTextOutput').innerText = finalText;
+    for (let i = 0; i < peopleCount; i++) {
+        let finalText = originalText;
+        let fields = document.querySelectorAll(`#fieldsContainer div:nth-child(${i + 1}) input`);
+        
+        fields.forEach(field => {
+            let regex = new RegExp(`\\{${field.name.split('_')[0]}\\}`, 'g');
+            finalText = finalText.replace(regex, field.value);
+        });
+
+        finalTextOutput.innerHTML += `<h3>Person ${i + 1}</h3><p>${finalText}</p>`;
+    }
 });
