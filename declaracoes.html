@@ -115,6 +115,7 @@ document.getElementById('createFieldsButton').addEventListener('click', function
 });
 
 document.getElementById('generateFinalTextButton').addEventListener('click', function() {
+    let person_now = 0;
     let originalText = document.getElementById('textEditor').value;
     let peopleCount = parseInt(document.getElementById('peopleCount').value);
     let finalTextOutput = document.getElementById('finalTextOutput');
@@ -136,7 +137,8 @@ document.getElementById('generateFinalTextButton').addEventListener('click', fun
         let downloadLink = document.createElement("button");
         downloadLink.innerText = "Download Person " + (i + 1) + " Document";
         downloadLink.onclick = function() {
-            loadAndModifyDocx(finalText, i);
+            person_now = i+1;
+            loadAndModifyDocx(finalText, person_now);
         };
         finalTextOutput.appendChild(downloadLink);
     }
@@ -178,7 +180,7 @@ function loadAndModifyDocx(newText, personIndex) {
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement("a");
                 a.href = url;
-                a.download = "Declaracao_" + (personIndex + 1) + ".docx";
+                a.download = "Declaracao_" + (personIndex) + ".docx";
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
