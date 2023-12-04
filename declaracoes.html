@@ -115,7 +115,6 @@ document.getElementById('createFieldsButton').addEventListener('click', function
 });
 
 document.getElementById('generateFinalTextButton').addEventListener('click', function() {
-    let person_now = 0;
     let originalText = document.getElementById('textEditor').value;
     let peopleCount = parseInt(document.getElementById('peopleCount').value);
     let finalTextOutput = document.getElementById('finalTextOutput');
@@ -137,57 +136,58 @@ document.getElementById('generateFinalTextButton').addEventListener('click', fun
         let downloadLink = document.createElement("button");
         downloadLink.innerText = "Download Person " + (i + 1) + " Document";
         downloadLink.onclick = function() {
-            person_now = i+1;
-            loadAndModifyDocx(finalText, person_now);
+            loadAndModifyDocx(finalText, i);
         };
         finalTextOutput.appendChild(downloadLink);
     }
 });
 
 function loadAndModifyDocx(newText, personIndex) {
+    console.log("Generating document for Person", personIndex + 1);
     let url = 'declaracoes/template.docx';
-    // Fetch the .docx file from the server
+
     fetch(url)
     .then(response => response.blob())
     .then(blob => {
-        // Read the blob as an ArrayBuffer
         const reader = new FileReader();
-        reader.readAsArrayBuffer(blob);
         reader.onloadend = () => {
-            // Create a new JSZip instance
             const zip = new JSZip();
-            // Load the .docx file (which is a zip archive)
             zip.loadAsync(reader.result)
             .then(zip => {
-                // Get the document.xml file from the 'word' folder
                 return zip.file("word/document.xml").async("string");
             })
             .then(xml => {
-                // Modify the XML content
                 let updatedXml = xml
                     .replace('{TITLE}', document.getElementById('declarationTitle').value)
                     .replace('{NAME}', document.getElementById('fullName').value)
                     .replace('{CITY}', document.getElementById('city').value)
                     .replace('{ROLE}', document.getElementById('role').value)
                     .replace('{TEXT}', newText);
-                // Update the zip file with the modified XML
+
                 zip.file("word/document.xml", updatedXml);
-                // Generate a new .docx file
                 return zip.generateAsync({type: "blob"});
             })
             .then(blob => {
-                // Download the modified .docx file
-                const url = URL.createObjectURL(blob);
+                const downloadUrl = URL.createObjectURL(blob);
+                console.log("Download URL generated:", downloadUrl);
                 const a = document.createElement("a");
-                a.href = url;
-                a.download = "Declaracao_" + (personIndex) + ".docx";
+                a.href = downloadUrl;
+                a.download = "Declaracao_" + (personIndex + 1) + ".docx";
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
+            })
+            .catch(error => {
+                console.error("Error generating document for Person", personIndex + 1, error);
             });
         };
+        reader.readAsArrayBuffer(blob);
+    })
+    .catch(error => {
+        console.error("Error fetching template:", error);
     });
 }
+
 
     </script>
 </body>
