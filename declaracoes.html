@@ -2,7 +2,25 @@
 <html>
 <head>
     <title>Customizable Text Editor</title>
-    <link rel="stylesheet" type="text/css" href="declaracoes/style.css">
+    <style>body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+}
+
+#inputArea, #customizationArea, #outputArea {
+    margin-bottom: 20px;
+}
+
+input, button {
+    margin: 5px;
+    padding: 10px;
+    font-size: 16px;
+}
+
+#fieldsContainer {
+    margin-top: 10px;
+}
+</style>
 </head>
 <body>
     <textarea id="textEditor" rows="10" cols="50"></textarea>
@@ -21,8 +39,107 @@
 
     <button id="generateFinalTextButton">Gerar texto final</button>
 
-    <div id="finalTextOutput"></div>
 
-    <script src="declaracoes/script.js"></script>
+    <div id="finalTextOutput"></div>
+ <button id="teste" onclick="loadAndModifyDocx('testemilgrau')">Teste</button>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/docxtemplater/3.25.1/docxtemplater.min.js"></script>
+<script>
+document.getElementById('addTagButton').addEventListener('click', function() {
+    let tagName = document.getElementById('tagName').value;
+    let textEditor = document.getElementById('textEditor');
+    let cursorPos = textEditor.selectionStart;
+    let textBefore = textEditor.value.substring(0, cursorPos);
+    let textAfter = textEditor.value.substring(cursorPos);
+    textEditor.value = textBefore + `{${tagName}}` + textAfter;
+});
+
+document.getElementById('createFieldsButton').addEventListener('click', function() {
+    let peopleCount = document.getElementById('peopleCount').value;
+    let fieldsContainer = document.getElementById('fieldsContainer');
+    fieldsContainer.innerHTML = ''; // Clear existing fields
+
+    for (let i = 0; i < peopleCount; i++) {
+        let personFields = document.createElement('div');
+        personFields.innerHTML = `<h3>Person ${i + 1}</h3>`;
+        let tagNames = document.getElementById('textEditor').value.match(/\{([^}]+)\}/g);
+
+        if (tagNames) {
+            tagNames.forEach(tagName => {
+                let fieldName = tagName.replace(/[{}]/g, '') + `_${i}`;
+                personFields.innerHTML += `<label>${fieldName}: </label><input type='text' name='${fieldName}'><br>`;
+            });
+        }
+
+        fieldsContainer.appendChild(personFields);
+    }
+});
+
+document.getElementById('generateFinalTextButton').addEventListener('click', function() {
+    let originalText = document.getElementById('textEditor').value;
+    let peopleCount = document.getElementById('peopleCount').value;
+    let finalTextOutput = document.getElementById('finalTextOutput');
+    finalTextOutput.innerHTML = ''; // Clear existing output
+
+    for (let i = 0; i < peopleCount; i++) {
+        let finalText = originalText;
+        let fields = document.querySelectorAll(`#fieldsContainer div:nth-child(${i + 1}) input`);
+        
+        fields.forEach(field => {
+            let regex = new RegExp(`\\{${field.name.split('_')[0]}\\}`, 'g');
+            finalText = finalText.replace(regex, field.value);
+        });
+
+        finalTextOutput.innerHTML += `<h3>Person ${i + 1}</h3><p>${finalText}</p>`;
+    }
+});
+
+<!-- Include JSZip and docxtemplater via script tags -->
+
+
+
+function loadAndModifyDocx(newText) {
+let url = 'declaracoes/template.docx'
+    // Fetch the .docx file from the server
+    fetch(url)
+    .then(response => response.blob())
+    .then(blob => {
+        // Read the blob as an ArrayBuffer
+        const reader = new FileReader();
+        reader.readAsArrayBuffer(blob);
+        reader.onloadend = () => {
+            // Create a new JSZip instance
+            const zip = new JSZip();
+            // Load the .docx file (which is a zip archive)
+            zip.loadAsync(reader.result)
+            .then(zip => {
+                // Get the document.xml file from the 'word' folder
+                return zip.file("word/document.xml").async("string");
+            })
+            .then(xml => {
+                // Modify the XML content
+                const updatedXml = xml.replace('{text}', newText);
+                // Update the zip file with the modified XML
+                zip.file("word/document.xml", updatedXml);
+                // Generate a new .docx file
+                return zip.generateAsync({type: "blob"});
+            })
+            .then(blob => {
+                // Download the modified .docx file
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = "modified.docx";
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            });
+        };
+    });
+}
+
+
+</script>
 </body>
 </html>
