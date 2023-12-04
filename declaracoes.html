@@ -113,7 +113,8 @@ document.getElementById('createFieldsButton').addEventListener('click', function
         fieldsContainer.appendChild(personFields);
     }
 });
-
+let finalTexts =[];
+        
 document.getElementById('generateFinalTextButton').addEventListener('click', function() {
     let originalText = document.getElementById('textEditor').value;
     let peopleCount = parseInt(document.getElementById('peopleCount').value);
@@ -132,17 +133,18 @@ document.getElementById('generateFinalTextButton').addEventListener('click', fun
         // Append the customized text for each person
         finalTextOutput.innerHTML += `<h3>Person ${i + 1}</h3><p>${finalText}</p>`;
 
-        // Create a download link for each person's customized docx file
+        finalTexts[i] = finalText;
         let downloadLink = document.createElement("button");
         downloadLink.innerText = "Download Person " + (i + 1) + " Document";
-        downloadLink.onclick = function() {
-            loadAndModifyDocx(finalText, i);
-        };
+        downloadLink.addEventListener('click', function() {
+            loadAndModifyDocx(i);
+        });
         finalTextOutput.appendChild(downloadLink);
     }
 });
 
-function loadAndModifyDocx(newText, personIndex) {
+function loadAndModifyDocx(personIndex) {
+    let newText = finalTexts[personIndex];
     console.log("Generating document for Person", personIndex + 1);
     let url = 'declaracoes/template.docx';
 
