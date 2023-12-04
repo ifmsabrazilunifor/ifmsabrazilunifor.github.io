@@ -119,7 +119,7 @@ let url = 'declaracoes/template.docx'
             })
             .then(xml => {
                 // Modify the XML content
-                const updatedXml = xml.replace('{text}', newText);
+                const updatedXml = xml.replace('{TEXT}', newText);
                 // Update the zip file with the modified XML
                 zip.file("word/document.xml", updatedXml);
                 // Generate a new .docx file
