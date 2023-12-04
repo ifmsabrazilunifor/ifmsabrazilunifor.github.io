@@ -1,78 +1,28 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Customizable Area Generator</title>
-    <style>
-    body {
-    font-family: Arial, sans-serif;
-    margin: 20px;
-}
-
-#inputArea, #customizationArea, #outputArea {
-    margin-bottom: 20px;
-}
-
-input, button {
-    margin: 5px;
-    padding: 10px;
-    font-size: 16px;
-}
-
-#fieldsContainer {
-    margin-top: 10px;
-}
-    </style>
+    <title>Customizable Text Editor</title>
+    <link rel="stylesheet" type="text/css" href="declaracoes/style.css">
 </head>
 <body>
-    <div id="inputArea">
-        <input type="text" id="inputField" placeholder="Enter tag">
-        <button id="addButton">Adicione área customizável</button>
+    <textarea id="textEditor" rows="10" cols="50"></textarea>
+
+    <div id="tagInputArea">
+        <input type="text" id="tagName" placeholder="Tag name">
+        <button id="addTagButton">Adicione área customizável</button>
     </div>
 
-    <div id="customizationArea">
+    <div id="peopleCustomizationArea">
         <input type="number" id="peopleCount" placeholder="Number of people">
-        <button id="createFields">Create Custom Fields</button>
-        <div id="fieldsContainer"></div>
+        <button id="createFieldsButton">Criar campos</button>
     </div>
 
-    <button id="generateButton">Generate</button>
+    <div id="fieldsContainer"></div>
 
-    <div id="outputArea"></div>
+    <button id="generateFinalTextButton">Gerar texto final</button>
 
-    <script>
+    <div id="finalTextOutput"></div>
 
-      document.getElementById('addButton').addEventListener('click', function() {
-    let tag = document.getElementById('inputField').value;
-    let newField = document.createElement('div');
-    newField.innerHTML = `<label>${tag}: </label><input type='text' name='${tag}'>`;
-    document.getElementById('fieldsContainer').appendChild(newField);
-});
-
-document.getElementById('createFields').addEventListener('click', function() {
-    let peopleCount = document.getElementById('peopleCount').value;
-    let fields = document.querySelectorAll('#fieldsContainer > div');
-    let fieldsContainer = document.getElementById('fieldsContainer');
-    fieldsContainer.innerHTML = ''; // Clear existing fields
-
-    for (let i = 0; i < peopleCount; i++) {
-        fields.forEach(field => {
-            let clonedField = field.cloneNode(true);
-            clonedField.querySelector('input').name += `_${i}`;
-            fieldsContainer.appendChild(clonedField);
-        });
-    }
-});
-
-document.getElementById('generateButton').addEventListener('click', function() {
-    let fields = document.querySelectorAll('#fieldsContainer input');
-    let outputArea = document.getElementById('outputArea');
-    outputArea.innerHTML = '';
-
-    fields.forEach(field => {
-        outputArea.innerHTML += `<p>${field.name}: ${field.value}</p>`;
-    });
-});
-
-    </script>
+    <script src="declaracoes/script.js"></script>
 </body>
 </html>
