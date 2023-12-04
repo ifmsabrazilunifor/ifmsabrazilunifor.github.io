@@ -136,7 +136,8 @@ document.getElementById('generateFinalTextButton').addEventListener('click', fun
         finalTexts[i] = finalText;
 
         finalTextOutput.innerHTML += `<button id='downloadButton${i}' onclick="loadAndModifyDocx(${i})">Download Person ${i + 1} Document</button>`;
-});
+    };
+}); 
 
 function loadAndModifyDocx(personIndex) {
     let newText = finalTexts[personIndex];
