@@ -2,27 +2,32 @@
 <html>
 <head>
     <title>Customizable Text Editor</title>
-    <style>body {
-    font-family: Arial, sans-serif;
-    margin: 20px;
-}
-
-#inputArea, #customizationArea, #outputArea {
-    margin-bottom: 20px;
-}
-
-input, button {
-    margin: 5px;
-    padding: 10px;
-    font-size: 16px;
-}
-
-#fieldsContainer {
-    margin-top: 10px;
-}
-</style>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        #inputArea, #customizationArea, #outputArea {
+            margin-bottom: 20px;
+        }
+        input, button {
+            margin: 5px;
+            padding: 10px;
+            font-size: 16px;
+        }
+        #fieldsContainer {
+            margin-top: 10px;
+        }
+    </style>
 </head>
 <body>
+    <div id="patternInputArea">
+        <input type="text" id="declarationTitle" placeholder="Título (ex: declaração para monitoria)">
+        <input type="text" id="fullName" placeholder="Nome Completo">
+        <input type="text" id="city" placeholder="Fortaleza, DD de MM de 20AA">
+        <input type="text" id="role" placeholder="Cargo no Comitê Local e nome do Comitê">
+    </div>
+
     <textarea id="textEditor" rows="10" cols="50"></textarea>
 
     <div id="tagInputArea">
@@ -39,13 +44,12 @@ input, button {
 
     <button id="generateFinalTextButton">Gerar texto final</button>
 
-
     <div id="finalTextOutput"></div>
- <button id="teste" onclick="loadAndModifyDocx('testemilgrau')">Teste</button>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/docxtemplater/3.25.1/docxtemplater.min.js"></script>
-<script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/docxtemplater/3.25.1/docxtemplater.min.js"></script>
+    <script>
+
 document.getElementById('addTagButton').addEventListener('click', function() {
     let tagName = document.getElementById('tagName').value;
     let textEditor = document.getElementById('textEditor');
@@ -95,51 +99,56 @@ document.getElementById('generateFinalTextButton').addEventListener('click', fun
     }
 });
 
-<!-- Include JSZip and docxtemplater via script tags -->
+        document.getElementById('generateFinalTextButton').addEventListener('click', function() {
+            let originalText = document.getElementById('textEditor').value;
+            let peopleCount = document.getElementById('peopleCount').value;
+            let finalTextOutput = document.getElementById('finalTextOutput');
+            finalTextOutput.innerHTML = ''; // Clear existing output
 
+            for (let i = 0; i < peopleCount; i++) {
+                let finalText = originalText;
+                let fields = document.querySelectorAll(`#fieldsContainer div:nth-child(${i + 1}) input`);
+                
+                fields.forEach(field => {
+                    let regex = new RegExp(`\\{${field.name.split('_')[0]}\\}`, 'g');
+                    finalText = finalText.replace(regex, field.value);
+                });
 
+                // Append the customized text for each person
+                finalTextOutput.innerHTML += `<h3>Person ${i + 1}</h3><p>${finalText}</p>`;
 
-function loadAndModifyDocx(newText) {
-let url = 'declaracoes/template.docx'
-    // Fetch the .docx file from the server
-    fetch(url)
-    .then(response => response.blob())
-    .then(blob => {
-        // Read the blob as an ArrayBuffer
-        const reader = new FileReader();
-        reader.readAsArrayBuffer(blob);
-        reader.onloadend = () => {
-            // Create a new JSZip instance
-            const zip = new JSZip();
-            // Load the .docx file (which is a zip archive)
-            zip.loadAsync(reader.result)
-            .then(zip => {
-                // Get the document.xml file from the 'word' folder
-                return zip.file("word/document.xml").async("string");
-            })
-            .then(xml => {
-                // Modify the XML content
-                const updatedXml = xml.replace('{TEXT}', newText);
-                // Update the zip file with the modified XML
-                zip.file("word/document.xml", updatedXml);
-                // Generate a new .docx file
-                return zip.generateAsync({type: "blob"});
-            })
+                // Create a download link for each person's customized docx file
+                let downloadLink = document.createElement("button");
+                downloadLink.innerText = "Download Person " + (i + 1) + " Document";
+                downloadLink.onclick = function() {
+                    loadAndModifyDocx(finalText, i);
+                };
+                finalTextOutput.appendChild(downloadLink);
+            }
+        });
+
+        function loadAndModifyDocx(newText, personIndex) {
+            let url = 'declaracoes/template.docx';
+            // Fetch the .docx file from the server
+            fetch(url)
+            .then(response => response.blob())
             .then(blob => {
-                // Download the modified .docx file
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement("a");
-                a.href = url;
-                a.download = "modified.docx";
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
+                // ... [Rest of your existing fetch and JSZip code] ...
+
+                // Modify the XML content
+                let updatedXml = xml
+                    .replace('{TÍTULO}', document.getElementById('declarationTitle').value)
+                    .replace('{NAME}', document.getElementById('fullName').value)
+                    .replace('{CITY}', document.getElementById('city').value)
+                    .replace('{ROLE}', document.getElementById('role').value)
+                    .replace('{TEXT}', newText);
+
+                // ... [Rest of your existing zip and download code] ...
+
+                // Set the filename to include the person index
+                a.download = "modified_person_" + (personIndex + 1) + ".docx";
             });
-        };
-    });
-}
-
-
-</script>
+        }
+    </script>
 </body>
 </html>
