@@ -136,9 +136,11 @@ document.getElementById('generateFinalTextButton').addEventListener('click', fun
         finalTexts[i] = finalText;
         let downloadLink = document.createElement("button");
         downloadLink.innerText = "Download Person " + (i + 1) + " Document";
-        downloadLink.addEventListener('click', function() {
-            loadAndModifyDocx(i);
-        });
+        (function(index) {
+            downloadLink.addEventListener('click', function() {
+                loadAndModifyDocx(index);
+            });
+        })(i);
         finalTextOutput.appendChild(downloadLink);
     }
 });
