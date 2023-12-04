@@ -163,7 +163,7 @@ function loadAndModifyDocx(newText, personIndex) {
             .then(xml => {
                 // Modify the XML content
                 let updatedXml = xml
-                    .replace('{TÍTULO}', document.getElementById('declarationTitle').value)
+                    .replace('{TITLE}', document.getElementById('declarationTitle').value)
                     .replace('{NAME}', document.getElementById('fullName').value)
                     .replace('{CITY}', document.getElementById('city').value)
                     .replace('{ROLE}', document.getElementById('role').value)
