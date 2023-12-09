@@ -6,15 +6,18 @@
   
 </head>
 <body>
-    <input type="text" id="textInput" placeholder="Enter your text here">
+    <input type="text" id="textInput" placeholder="Ano do anuário">
+    <input type="text" id="textInput2" placeholder="Comitê XYZ">
     </select>
     <button onclick="generateImage()">Generate Image</button>
     <canvas id="canvas" style="display:none;"></canvas>
     <a id="downloadLink" style="display:none;">Download</a>
 <script>
 function generateImage() {
-    const text = document.getElementById('textInput').value;
+    const ano = document.getElementById('textInput').value;
+    const text = document.getElementById('textInput2').value;
     const fontSize = 48;
+    const fontSize2 = 41;
     const imagePath = 'https://raw.githubusercontent.com/ifmsabrazilunifor/ifmsabrazilunifor.github.io/main/anuario/arquivo_base.png'; // URL to the image
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
@@ -27,7 +30,11 @@ function generateImage() {
         ctx.drawImage(img, 0, 0);
         ctx.font = `bold ${fontSize}pt Poppins`; // Using Poppins font
         ctx.fillStyle = '#03589b';
-        ctx.fillText(text, 152, 1072); // Adjust text positioning as needed
+        ctx.fillText(ano, 152, 1072); // Adjust text positioning as needed
+
+        ctx.font = `medium ${fontSize2}pt Poppins`; // Using Poppins font
+        ctx.fillStyle = '#03589b';
+        ctx.fillText(text, 159, 1327); // Adjust text positioning as needed
 
         createDownloadLink(canvas.toDataURL('image/png'));
     };
