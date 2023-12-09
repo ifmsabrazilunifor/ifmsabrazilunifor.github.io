@@ -11,6 +11,7 @@
 <body>
     <input type="text" id="textInput" placeholder="Ano do anuário">
     <input type="text" id="textInput2" placeholder="Comitê XYZ">
+    <input type="file" id="imageInput" accept="image/*"> 
     </select>
     <button onclick="generateImage()">Generate Image</button>
     <canvas id="canvas" style="display:none;"></canvas>
@@ -22,6 +23,7 @@ function generateImage() {
     const fontSize = 200;
     const fontSize2 = 170;
     const imagePath = 'https://raw.githubusercontent.com/ifmsabrazilunifor/ifmsabrazilunifor.github.io/main/anuario/arquivo_base2.png'; // URL to the image
+    const uploadedImage = document.getElementById('imageInput').files[0]; // Get the uploaded image
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
 
@@ -39,7 +41,18 @@ function generateImage() {
         ctx.fillStyle = '#03589b';
         ctx.fillText(text, 159, 1496); // Adjust text positioning as needed
 
-        createDownloadLink(canvas.toDataURL('image/png'));
+        if (uploadedImage) {
+            const userImage = new Image();
+            userImage.onload = function() {
+                const scaleFactor = 400 / userImage.width;
+                const newHeight = userImage.height * scaleFactor;
+                ctx.drawImage(userImage, 2005, 72, 400, newHeight);
+                createDownloadLink(canvas.toDataURL('image/png'));
+            };
+            userImage.src = URL.createObjectURL(uploadedImage);
+        } else {
+            createDownloadLink(canvas.toDataURL('image/png'));
+        }
     };
     img.src = imagePath;
 }
