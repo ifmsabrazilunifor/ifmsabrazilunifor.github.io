@@ -11,7 +11,7 @@
     <button onclick="generateImage()">Generate Image</button>
     <canvas id="canvas" style="display:none;"></canvas>
     <a id="downloadLink" style="display:none;">Download</a>
-
+<script>
     function generateImage() {
     const text = document.getElementById('textInput').value;
     const fontSize = 48;
@@ -48,6 +48,6 @@ function createDownloadLink(dataUrl) {
     link.style.display = 'block';
     link.textContent = 'Download Image';
 }
-
+</script>
 </body>
 </html>
