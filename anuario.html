@@ -16,8 +16,8 @@
 function generateImage() {
     const ano = document.getElementById('textInput').value;
     const text = document.getElementById('textInput2').value;
-    const fontSize = 48;
-    const fontSize2 = 41;
+    const fontSize = 200;
+    const fontSize2 = 170.83;
     const imagePath = 'https://raw.githubusercontent.com/ifmsabrazilunifor/ifmsabrazilunifor.github.io/main/anuario/arquivo_base.png'; // URL to the image
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
@@ -28,11 +28,11 @@ function generateImage() {
         canvas.width = img.width;
         canvas.height = img.height;
         ctx.drawImage(img, 0, 0);
-        ctx.font = `bold ${fontSize}pt Poppins`; // Using Poppins font
+        ctx.font = `bold ${fontSize}px Poppins`; // Using Poppins font
         ctx.fillStyle = '#03589b';
         ctx.fillText(ano, 152, 1072); // Adjust text positioning as needed
 
-        ctx.font = `medium ${fontSize2}pt Poppins`; // Using Poppins font
+        ctx.font = `medium ${fontSize2}px Poppins`; // Using Poppins font
         ctx.fillStyle = '#03589b';
         ctx.fillText(text, 159, 1327); // Adjust text positioning as needed
 
