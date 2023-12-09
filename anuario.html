@@ -72,7 +72,7 @@ function generateImage() {
     const text = document.getElementById('textInput2').value;
     const fontSize = 200;
     const fontSize2 = 170;
-    const imagePath = 'https://raw.githubusercontent.com/ifmsabrazilunifor/ifmsabrazilunifor.github.io/main/anuario/arquivo_base2.png'; // URL to the image
+    const imagePath = 'https://raw.githubusercontent.com/ifmsabrazilunifor/ifmsabrazilunifor.github.io/main/anuario/arquivo_base3.png'; // URL to the image
     const uploadedImage = document.getElementById('imageInput').files[0]; // Get the uploaded image
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
@@ -94,7 +94,7 @@ function generateImage() {
         if (uploadedImage) {
             const userImage = new Image();
             userImage.onload = function() {
-                const scaleFactor = 400 / userImage.width;
+                const scaleFactor = 390 / userImage.width;
                 const newHeight = userImage.height * scaleFactor;
                 ctx.drawImage(userImage, 2005, 72, 400, newHeight);
                 createDownloadLink(canvas.toDataURL('image/png'));
