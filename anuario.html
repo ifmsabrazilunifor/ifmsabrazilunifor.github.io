@@ -87,7 +87,7 @@ function generateImage() {
         ctx.fillStyle = '#03589b';
         ctx.fillText(ano, 152, 1237); // Adjust text positioning as needed
 
-        ctx.font = `medium ${fontSize2}px Poppins`; // Using Poppins font
+        ctx.font = `500 ${fontSize2}px Poppins`; // Using Poppins font
         ctx.fillStyle = '#03589b';
         ctx.fillText(text, 159, 1496); // Adjust text positioning as needed
 
@@ -112,7 +112,7 @@ function createDownloadLink(dataUrl) {
     link.href = dataUrl;
     link.download = 'modified-image.png';
     link.style.display = 'block';
-    link.textContent = 'Download Image';
+    link.textContent = 'Fazer o download da imagem';
 }
 
 </script>
