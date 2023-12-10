@@ -1,4 +1,4 @@
-const targetDate = new Date('2023-12-14T10:00:00Z'); // GMT-3 is 3 hours behind GMT, so we add 3 hours to the target time
+const targetDate = new Date('2023-12-14T12:30:00Z'); // GMT-3 is 3 hours behind GMT, so we add 3 hours to the target time
 
 function updateCountdown() {
     const now = new Date();
