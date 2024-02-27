@@ -5,51 +5,103 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QR Code Generator</title>
     <style>
+        /* Reset some default styles */
+        body, html, div, a, button {
+            margin: 0;
+            padding: 0;
+            border: 0;
+            font-size: 100%;
+            font: inherit;
+            vertical-align: baseline;
+        }
+
+        body, html {
+            height: 100%;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #f3f5f7, #ffffff);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
         .made-with-love {
-            position: absolute;
-            top: 10px;
+            position: fixed;
+            bottom: 10px;
             right: 10px;
             font-size: 14px;
-            background: rgba(255, 255, 255, 0.7);
+            background: rgba(255, 255, 255, 0.8);
             padding: 5px 10px;
             border-radius: 5px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            text-align: center;
         }
 
         .heart {
             color: red;
         }
-        body, html {
-    font-family: 'Poppins', sans-serif;
-    background: linear-gradient(135deg, #f3f5f7, #ffffff);
-    /* Other styles remain the same */
-}
 
-button, input[type="text"] {
-    background-color: #0077B6;
-    color: white;
-    border: none; /* If you prefer no border */
-    /* Other styles adapted as needed */
-}
+        #app {
+            width: 100%;
+            max-width: 500px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            padding: 20px;
+            box-sizing: border-box;
+            text-align: center;
+        }
 
-button:hover {
-    background-color: #005694;
-}
+        input[type="text"], button {
+            width: 100%;
+            padding: 10px 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #0077B6;
+            box-sizing: border-box;
+        }
 
-#app {
-    background-color: #ffffff;
-    border-radius: 8px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-    padding: 20px;
-    /* Adjust margins as needed for layout */
-}
+        input[type="text"] {
+            background-color: #fff;
+            color: #333;
+        }
 
-/* Ensure other elements like input fields also match the style guide */
-input[type="text"], input[type="text"]:focus {
-    border-color: #0077B6;
-    outline: none;
-    /* Additional styles for consistency */
-}
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #005694;
+            box-shadow: 0 0 0 2px rgba(0,86,148,0.2);
+        }
+
+        button {
+            background-color: #0077B6;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #005694;
+        }
+
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+
+        #qrCode {
+            margin: 20px 0;
+        }
+
+        a {
+            color: #0077B6;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
 
     </style>
 </head>
