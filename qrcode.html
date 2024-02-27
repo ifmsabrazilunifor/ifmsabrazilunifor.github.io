@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QR Code Generator</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@simonwep/pickr/dist/themes/classic.min.css"/> <!-- Pickr's CSS -->
+<script src="https://cdn.jsdelivr.net/npm/@simonwep/pickr@latest"></script> <!-- Pickr's JS -->
     <style>
         /* Reset some default styles */
         body, html, div, a, button {
@@ -114,48 +116,79 @@
         <button id="generateBtn">Generate QR Code</button>
         <div id="qrCode"></div>
         <button id="downloadPNG">Download as PNG</button>
-        <button id="downloadSVG">Download as SVG</button>
+        <br>
+        Background Color: <input type="color" id="backgroundColor" value="#ffffff">
+        Border Color: <input type="color" id="borderColor" value="#000000">
+        <br>
+        Border Size (px): <input type="number" id="borderSize" value="0" min="0">
     </div>
-    <script src="qrcode.min.js"></script>
-    <script src="script.js"></script>
-</body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+    const urlInput = document.getElementById('urlInput');
+    const generateBtn = document.getElementById('generateBtn');
+    const downloadPNG = document.getElementById('downloadPNG');
+    const qrCodeDiv = document.getElementById('qrCode');
+    let backgroundColor = '#ffffff'; // Default background color
+    let borderColor = '#000000'; // Default border color
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-<script>
-    document.getElementById('generateBtn').addEventListener('click', function() {
-        const url = document.getElementById('urlInput').value;
+    // Initialize background color picker
+    const bgColorPicker = Pickr.create({
+        el: '#backgroundColorPicker',
+        theme: 'classic',
+        default: backgroundColor,
+        components: {
+            preview: true,
+            opacity: true,
+            hue: true,
+            interaction: {
+                input: true,
+                save: true
+            }
+        }
+    }).on('save', (color) => {
+        backgroundColor = color.toRGBA().toString();
+        bgColorPicker.hide();
+    });
+
+    // Initialize border color picker
+    const borderColorPicker = Pickr.create({
+        el: '#borderColorPicker',
+        theme: 'classic',
+        default: borderColor,
+        components: {
+            preview: true,
+            opacity: true,
+            hue: true,
+            interaction: {
+                input: true,
+                save: true
+            }
+        }
+    }).on('save', (color) => {
+        borderColor = color.toRGBA().toString();
+        borderColorPicker.hide();
+    });
+
+    generateBtn.addEventListener('click', () => {
+        const url = urlInput.value.trim();
         if (!url) {
-            alert('Please enter a URL');
+            alert("Please enter a URL");
             return;
         }
-    
-        // Clear previous QR code
-        const qrCodeDiv = document.getElementById('qrCode');
-        qrCodeDiv.innerHTML = '';
-    
-        // Generate QR code as SVG
-        const qrcode = new QRCode(qrCodeDiv, {
+        qrCodeDiv.innerHTML = ''; // Clear previous QR code
+        new QRCode(qrCodeDiv, {
             text: url,
-            width: 200,
-            height: 200,
-            colorDark: "#000000",
-            colorLight: "#ffffff",
-            correctLevel: QRCode.CorrectLevel.H,
-            useSVG: true // This ensures an SVG is generated
+            width: 256,
+            height: 256,
+            colorDark : borderColor,
+            colorLight : backgroundColor,
+            correctLevel : QRCode.CorrectLevel.H
         });
-    
-        // Check if SVG was created
-        const svg = qrCodeDiv.querySelector('svg');
-        if(svg) {
-            document.getElementById('downloadSVG').disabled = false; // Enable SVG download only if SVG exists
-        }
-    
-        // Enable download PNG button since QR code generation implies canvas creation
-        document.getElementById('downloadPNG').disabled = false;
+        downloadPNG.disabled = false; // Enable download button
     });
-    
-    document.getElementById('downloadPNG').addEventListener('click', function() {
-        const qrCodeDiv = document.getElementById('qrCode');
+
+    downloadPNG.addEventListener('click', () => {
         const canvas = qrCodeDiv.querySelector('canvas');
         if (!canvas) {
             alert('Please generate the QR code first.');
@@ -169,24 +202,9 @@
         downloadLink.click();
         document.body.removeChild(downloadLink);
     });
-    
-    document.getElementById('downloadSVG').addEventListener('click', function() {
-        const qrCodeDiv = document.getElementById('qrCode');
-        const svg = qrCodeDiv.querySelector('svg');
-        if (!svg) {
-            alert('Please generate the QR code first.');
-            return;
-        }
-        const svgData = new XMLSerializer().serializeToString(svg);
-        const svgBlob = new Blob([svgData], {type: "image/svg+xml;charset=utf-8"});
-        const svgUrl = URL.createObjectURL(svgBlob);
-        const downloadLink = document.createElement('a');
-        downloadLink.href = svgUrl;
-        downloadLink.download = 'QRCode.svg';
-        document.body.appendChild(downloadLink);
-        downloadLink.click();
-        document.body.removeChild(downloadLink);
-    });
+});
+
+
     </script>
-    
+</body>
 </html>
