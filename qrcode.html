@@ -20,22 +20,35 @@
             color: red;
         }
         body, html {
-    height: 100%;
-    margin: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-family: Arial, sans-serif;
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #f3f5f7, #ffffff);
+    /* Other styles remain the same */
+}
+
+button, input[type="text"] {
+    background-color: #0077B6;
+    color: white;
+    border: none; /* If you prefer no border */
+    /* Other styles adapted as needed */
+}
+
+button:hover {
+    background-color: #005694;
 }
 
 #app {
-    text-align: center;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    padding: 20px;
+    /* Adjust margins as needed for layout */
 }
 
-input, button {
-    margin: 10px;
-    padding: 10px;
-    font-size: 16px;
+/* Ensure other elements like input fields also match the style guide */
+input[type="text"], input[type="text"]:focus {
+    border-color: #0077B6;
+    outline: none;
+    /* Additional styles for consistency */
 }
 
     </style>
